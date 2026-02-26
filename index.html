@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>MOUNTAIN TREKKING</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+background:black;
+color:white;
+overflow-x:hidden;
+}
+
+/* ================= NAVBAR ================= */
+
+nav{
+position:fixed;
+top:0;
+width:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 60px;
+background:rgba(0,0,0,0.4);
+backdrop-filter:blur(15px);
+z-index:1000;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:12px;
+font-size:18px;
+font-weight:bold;
+}
+
+.logo-img{
+width:50px;
+height:50px;
+border-radius:50%;
+object-fit:cover;
+box-shadow:0 0 20px #00ffc8;
+transition:0.4s;
+}
+
+.logo-img:hover{
+transform:scale(1.1) rotate(5deg);
+box-shadow:0 0 40px #00ffc8;
+}
+
+.menu a{
+color:white;
+margin-left:25px;
+text-decoration:none;
+font-weight:500;
+transition:0.3s;
+}
+
+.menu a:hover{
+color:#00ffc8;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+flex-direction:column;
+position:relative;
+overflow:hidden;
+background:radial-gradient(circle at center,#001a1a,#000);
+}
+
+.hero h1{
+font-size:55px;
+background:linear-gradient(90deg,#00ffc8,#00a2ff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+margin-bottom:20px;
+}
+
+.hero p{
+font-size:20px;
+opacity:0.8;
+margin-bottom:30px;
+}
+
+.btn{
+padding:14px 40px;
+border-radius:40px;
+background:linear-gradient(45deg,#00ffc8,#00a2ff);
+color:black;
+font-weight:bold;
+text-decoration:none;
+transition:0.4s;
+}
+
+.btn:hover{
+transform:scale(1.1);
+box-shadow:0 0 30px #00ffc8;
+}
+
+/* ================= STAR CANVAS ================= */
+
+canvas{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:0;
+}
+
+.hero-text{
+position:relative;
+z-index:2;
+}
+
+/* ================= TOPICS ================= */
+
+.topics{
+display:flex;
+justify-content:center;
+gap:40px;
+padding:80px 20px;
+background:black;
+}
+
+.box{
+padding:40px 60px;
+border-radius:20px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
+text-decoration:none;
+color:white;
+font-size:22px;
+transition:0.4s;
+}
+
+.box:hover{
+transform:translateY(-10px);
+box-shadow:0 0 30px #00ffc8;
+}
+
+/* ================= FOOTER ================= */
+
+footer{
+text-align:center;
+padding:30px;
+background:#000;
+opacity:0.5;
+}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <h2 class="logo">
+    <img src="images/logo.jpg" class="logo-img">
+    MOUNTAIN TREKKING
+  </h2>
+  <div class="menu">
+    <a href="#">Home </a>
+    <a href="about.html">Creator</a>
+  </div>
+</nav>
+
+<header class="hero">
+<canvas id="stars"></canvas>
+
+  <div class="hero-text">
+    <h1>ออกเดินทางสู่ธรรมชาติ</h1>
+    <p>ผา และ ป่า</p>
+    <p>ขอมูลจะใส่ลิงก์ไว้ทุกหน้า</p>
+    <a href="review.html" class="btn">ชมสถานที่เที่ยว</a>
+  </div>
+</header>
+
+
+<footer>
+© MOUNTAIN TREKKING
+</footer>
+
+<script>
+
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stars = [];
+let mouse = {x: null, y: null};
+
+window.addEventListener("mousemove", function(e){
+    mouse.x = e.x;
+    mouse.y = e.y;
+});
+
+window.addEventListener("resize", function(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+for(let i=0;i<150;i++){
+    stars.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        radius:Math.random()*2,
+        dx:(Math.random()-0.5)*0.5,
+        dy:(Math.random()-0.5)*0.5
+    });
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    stars.forEach(star=>{
+        star.x += star.dx;
+        star.y += star.dy;
+
+        if(star.x<0||star.x>canvas.width) star.dx*=-1;
+        if(star.y<0||star.y>canvas.height) star.dy*=-1;
+
+        ctx.beginPath();
+        ctx.arc(star.x,star.y,star.radius,0,Math.PI*2);
+        ctx.fillStyle="white";
+        ctx.fill();
+
+        if(mouse.x){
+            let dist = Math.hypot(star.x-mouse.x, star.y-mouse.y);
+            if(dist<100){
+                ctx.beginPath();
+                ctx.moveTo(star.x,star.y);
+                ctx.lineTo(mouse.x,mouse.y);
+                ctx.strokeStyle="rgba(0,255,200,0.2)";
+                ctx.stroke();
+            }
+        }
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+</script>
+
+</body>
+</html>
